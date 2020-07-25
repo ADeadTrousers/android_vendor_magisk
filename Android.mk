@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
 # This makefile simply copies Magisk to $PRODUCT_OUT. The real magic lies in build/core/Make
-# https://www.github.com/geofferey/omni_android_build/
+# https://github.com/Geofferey/omni_android_build/commit/8fc7d8f3cd8e0c09418047264475abc652439bdd
 # Normally one would not modify an itegral makefile to include things of this nature, 
 # but it attempts to overwrite init with symlinks to /system/bin/init, so, no choice.
 
