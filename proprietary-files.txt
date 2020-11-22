@@ -1,9 +1,1 @@
-magiskinit-20.4-arm|
-ec75754e260cd2ae4dc2035f03ee7bc06714d022
-magiskinit-20.4-arm64|
-8eafb343bc01dd4f1987dcf26b549fa0e9a3444a
-magiskinit-20.4-x86|
-08bd79c81e71b4073db03ecab863757a99c12e24
-magiskinit-20.4-x86_64|
-0d80bd0823c1ed3348cc1b729ae80158c894dcc6
-
+de5482fc4608ef627b9ab21f807224f8c0acd868  Magisk-v21.1.zip

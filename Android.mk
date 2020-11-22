@@ -12,10 +12,18 @@ LOCAL_MODULE       := magiskinit
 LOCAL_MODULE_TAGS  := optional
 
 ifndef $(MAGISK_VERSION)
-MAGISK_VERSION := 20.4
+MAGISK_VERSION := 21.1
 endif
 
-$(shell cp $(LOCAL_PATH)/magiskinit-$(MAGISK_VERSION)-$(TARGET_ARCH) $(PRODUCT_OUT)/magiskinit)
+ifeq ($(TARGET_ARCH), arm)
+$(shell unzip -p $(LOCAL_PATH)/Magisk-v$(MAGISK_VERSION).zip arm/magiskinit > $(PRODUCT_OUT)/magiskinit)
+else ifeq ($(TARGET_ARCH), arm64)
+$(shell unzip -p $(LOCAL_PATH)/Magisk-v$(MAGISK_VERSION).zip arm/magiskinit64 > $(PRODUCT_OUT)/magiskinit)
+else ifeq ($(TARGET_ARCH), x86)
+$(shell unzip -p $(LOCAL_PATH)/Magisk-v$(MAGISK_VERSION).zip x86/magiskinit > $(PRODUCT_OUT)/magiskinit)
+else ifeq ($(TARGET_ARCH), x86_64)
+$(shell unzip -p $(LOCAL_PATH)/Magisk-v$(MAGISK_VERSION).zip x86/magiskinit64 > $(PRODUCT_OUT)/magiskinit)
+endif
 
 endif
 
