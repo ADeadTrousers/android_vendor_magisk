@@ -1,1 +1,2 @@
-de5482fc4608ef627b9ab21f807224f8c0acd868  Magisk-v21.1.zip
+17fb6fe1469b2cb73eff8ae624a744f36b029d75aebc4afcffb6f59e0ed6e1f5  Magisk-v21.1.zip
+35369e23bc565888e8d8ec62294edaaae98ef4e15ba81349274cd74f8eb3c214  Magisk-v21.4.zip
