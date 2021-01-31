@@ -1,0 +1,67 @@
+From: osm0sis <osm0sis@outlook.com>
+Date: Sun, 3 Nov 2019 11:44:12 -0400
+Subject: [PATCH] boot_signer: support images with dt
+
+Some manufacturers (Samsung and Xiaomi, most notably) used a variant
+of bootimg.h where what is now the header_version field was instead
+used as dt_size for an appended dt.
+
+The images were signed with AVB 1.0 by the OEM but, since support for
+header_version 1 and above was added, attempting to re-sign these now
+results in the following error:
+
+  Exception in thread "main" java.lang.IllegalArgumentException: Invalid image header: invalid header length
+          at com.android.verity.BootSignature.getSignableImageSize(BootSignature.java:238)
+          at com.android.verity.BootSignature.doSignature(BootSignature.java:259)
+          at com.android.verity.BootSignature.main(BootSignature.java:347)
+
+So add a maximum value over which header_version will be correctly
+interpreted as dt_size, and sign accordingly.
+
+An example image is available here for inspection:
+https://gitlab.com/osm0sis/boot-img-collection/blob/master/aosp-sha256-avb1-osver-dt-xiaomi_mi5c-boot.img
+---
+ verity/BootSignature.java | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/verity/BootSignature.java b/verity/BootSignature.java
+index 28864cee..5e8b18cb 100644
+--- a/verity/BootSignature.java
++++ b/verity/BootSignature.java
+@@ -82,7 +82,11 @@ public class BootSignature extends ASN1Object
+      * or equal to 2.
+      */
+     private static final int BOOT_IMAGE_HEADER_V2_DTB_SIZE_OFFSET = 1648;
+-
++    /**
++     * Arbitrary maximum header version value;
++     * when greater assume the field is a dt size.
++     */
++    private static final int BOOT_IMAGE_HEADER_VERSION_MAXIMUM = 8;
+ 
+     /**
+      * Initializes the object for signing an image file
+@@ -220,8 +224,8 @@ public class BootSignature extends ASN1Object
+                 + ((ramdskSize + pageSize - 1) / pageSize) * pageSize
+                 + ((secondSize + pageSize - 1) / pageSize) * pageSize;
+ 
+-        int headerVersion = image.getInt(); // boot image header version
+-        if (headerVersion > 0) {
++        int headerVersion = image.getInt(); // boot image header version or dt size
++        if (headerVersion > 0 && headerVersion < BOOT_IMAGE_HEADER_VERSION_MAXIMUM) {
+             image.position(BOOT_IMAGE_HEADER_V1_RECOVERY_DTBO_SIZE_OFFSET);
+             int recoveryDtboLength = image.getInt();
+             length += ((recoveryDtboLength + pageSize - 1) / pageSize) * pageSize;
+@@ -238,6 +242,9 @@ public class BootSignature extends ASN1Object
+                 throw new IllegalArgumentException(
+                         "Invalid image header: invalid header length");
+             }
++        } else {
++            // headerVersion is 0 or actually dt size in this case
++            length += ((headerVersion + pageSize - 1) / pageSize) * pageSize;
+         }
+ 
+         length = ((length + pageSize - 1) / pageSize) * pageSize;
+-- 
+2.21.0
+

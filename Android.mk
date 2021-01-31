@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := Magisk
+LOCAL_MODULE := MagiskManager
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := APPS
 LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
@@ -13,7 +13,8 @@ ifndef $(MAGISK_VERSION)
 endif
 
 MY_MAGISK_INTERMEDIATES := $(TARGET_OUT_INTERMEDIATES)/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
-MY_MAGISK_ARCHIVE := $(LOCAL_PATH)/$(LOCAL_MODULE)-v$(MAGISK_VERSION).zip
+MY_MAGISK_ARCHIVE := $(LOCAL_PATH)/Magisk-v$(MAGISK_VERSION).zip
+MY_MAGISK_SIGNING_KEY := build/make/target/product/security/verity
 
 MY_MAGISK_SOURCE_IMAGE := $(MY_MAGISK_INTERMEDIATES)/new-boot.img
 MY_MAGISK_SOURCE_MANAGER := common/magisk.apk
@@ -74,6 +75,8 @@ LOCAL_POST_INSTALL_CMD := \
   chmod 755 $(MY_MAGISK_TARGET_PATCH) && \
   export OUTFD="1" && \
   $(MY_MAGISK_TARGET_PATCH) ../../../boot.img && \
+  $(BOOT_SIGNER) /boot $(MY_MAGISK_SOURCE_IMAGE) $(MY_MAGISK_SIGNING_KEY).pk8 $(MY_MAGISK_SIGNING_KEY).x509.pem $(MY_MAGISK_SOURCE_IMAGE) && \
+  $(AVBTOOL) add_hash_footer --image $(MY_MAGISK_SOURCE_IMAGE) --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) --partition_name boot --prop com.android.build.boot.os_version:10 && \
   mv -f $(MY_MAGISK_SOURCE_IMAGE) $(MY_MAGISK_TARGET_IMAGE)
 
 include $(BUILD_PREBUILT)
