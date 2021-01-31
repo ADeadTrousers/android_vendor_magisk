@@ -1,5 +1,4 @@
 # AOSP Integration for Magisk
-:warning: THIS REPOSITORY IS NOT PRODUCTION READY :warning: 
 
 ## Introduction
 
@@ -23,6 +22,21 @@ The aim of this repository is simply to integrate Magisk into the build process 
 9. Also the script needs the correct output device so `export OUTFD="1"` is being set.
 10. Now the script can be executed with `boot_patch.sh boot.img`.
 11. The file `new-boot.img` is being created and then copied back as `boot.img` into the out directory.
+
+## Integration
+
+Add the following to the manifest-tag in your `roomservice.xml`
+
+```xml
+  <project name="ADeadTrousers/android_vendor_magisk" path="vendor/magisk" remote="github" revision="master" />
+```
+
+Add the following to your device.mk
+
+```
+PRODUCT_PACKAGES += \
+    MagiskManager
+```
 
 ## Special Thanks To
 
