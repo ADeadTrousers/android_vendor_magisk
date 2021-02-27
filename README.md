@@ -11,13 +11,11 @@ The aim of this repository is simply to integrate Magisk into the build process 
 
 ## Workflow
 
-1. Extract `magisk.apk` from the archive. This is needed to have a source file the AOSP build process can use.
+1. Extract `addon.d.sh` from the archive. This is needed to have a source file the AOSP build process can use. This is the Magisk addon survival script and will later be copied to `system/addon.d/99-magisk.sh`.
 2. Everything else needs to be performed at the end of the build process (Work in progress)
-3. Extract the update survival script `addon.d.sh` as `99-magisk.sh` into the `/system/addon.d` folder and set the permissions to `755`.
-4. Extract `magiskboot` and `magiskinit` for the host architecture into the `Magik_intermediates` folder and set the permissions to `755`. These are the filese needed for modifying the boot image.
-5. Run `magiskinit -x magisk magisk` to extract the magisk binary from the init command.
-6. Extract `magiskinit` for the target architecture into the `Magik_intermediates` folder. This is the one that is actually put into the boot image.
-7. Extract `boot_patch.sh` and `util_functions.sh` into the `Magik_intermediates` folder and set the permissions to `755`. These are the script files that will modify the boot image.
+3. Extract `magiskboot` for the host architecture into the `intermediates` folder and set the permissions to `755`. This is the file needed for modifying the boot image.
+5. Extract `magiskinit`, `magisk32` and `magisk64` for the target architecture into the `intermediates` folder. These are the ones that are actually put into the boot image.
+7. Extract `boot_patch.sh` and `util_functions.sh` into the `intermediates` folder and set the permissions to `755`. These are the script files that will modify the boot image.
 8. The shebang (#!) from `boot_patch.sh` needs to be remove otherwise the script won't run.
 9. Also the script needs the correct output device so `export OUTFD="1"` is being set.
 10. Now the script can be executed with `boot_patch.sh boot.img`.
@@ -35,7 +33,7 @@ Add the following to your device.mk
 
 ```
 PRODUCT_PACKAGES += \
-    MagiskManager
+    99-magisk
 ```
 
 ## Special Thanks To
