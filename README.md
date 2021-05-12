@@ -36,6 +36,11 @@ PRODUCT_PACKAGES += \
     99-magisk
 ```
 
+## Known issues
+
+1) Currently I can't find any way to schedule the build AFTER the building of boot.img. So you've to run your build twice in order get magisk integrated for sure.
+2) The modified boot.img doesn't get automatically integrated into the final zip. Maybe the packing process uses the information from the "intermediates" folder. 
+
 ## Special Thanks To
 
 - [John Wo](https://github.com/topjohnwu) for creating Magisk.
