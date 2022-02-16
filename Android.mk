@@ -21,30 +21,54 @@ MY_MAGISK_SOURCE_IMAGE := $(MY_MAGISK_INTERMEDIATES)/new-boot.img
 MY_MAGISK_SOURCE_ADDON := assets/addon.d.sh
 MY_MAGISK_SOURCE_PATCH := assets/boot_patch.sh
 MY_MAGISK_SOURCE_FUNCTIONS := assets/util_functions.sh
-ifeq ($(TARGET_ARCH), arm)
-  MY_MAGISK_SOURCE_PATH := lib/armeabi-v7a/
-else ifeq ($(TARGET_ARCH), arm64)
-  MY_MAGISK_SOURCE_PATH := lib/armeabi-v7a/
-else ifeq ($(TARGET_ARCH), x86)
-  MY_MAGISK_SOURCE_PATH := lib/x86/
-else ifeq ($(TARGET_ARCH), x86_64)
-  MY_MAGISK_SOURCE_PATH := lib/x86/
+
+ifneq ($(filter arm arm64 ,$(TARGET_ARCH)),)
+  MY_MAGISK_SOURCE_PATH_32 := lib/armeabi-v7a/
+  ifeq ($(MAGISK_VERSION), 24.1)
+    MY_MAGISK_SOURCE_PATH_64 := lib/arm64-v8a/
+  else
+    MY_MAGISK_SOURCE_PATH_64 := $(MY_MAGISK_SOURCE_PATH_32)
+  endif
+else ifneq ($(filter x86 x86_64 ,$(TARGET_ARCH)),)
+  MY_MAGISK_SOURCE_PATH_32 := lib/x86/
+  ifeq ($(MAGISK_VERSION), 24.1)
+    MY_MAGISK_SOURCE_PATH_64 := lib/x86_64/
+  else
+    MY_MAGISK_SOURCE_PATH_64 := $(MY_MAGISK_SOURCE_PATH_32)
+  endif
+endif
+ifneq ($(filter arm x86 ,$(TARGET_ARCH)),)
+  MY_MAGISK_SOURCE_PATH := $(MY_MAGISK_SOURCE_PATH_32)
+else ifneq ($(filter arm64 x86_64 ,$(TARGET_ARCH)),)
+  MY_MAGISK_SOURCE_PATH := $(MY_MAGISK_SOURCE_PATH_64)
 else
   $(error Target architecture not supported: $(TARGET_ARCH))
 endif
 
 MY_MAGISK_SOURCE_INIT := $(MY_MAGISK_SOURCE_PATH)libmagiskinit.so
-MY_MAGISK_SOURCE_64 := $(MY_MAGISK_SOURCE_PATH)libmagisk64.so
-MY_MAGISK_SOURCE_32 := $(MY_MAGISK_SOURCE_PATH)libmagisk32.so
+MY_MAGISK_SOURCE_64 := $(MY_MAGISK_SOURCE_PATH_64)libmagisk64.so
+MY_MAGISK_SOURCE_32 := $(MY_MAGISK_SOURCE_PATH_32)libmagisk32.so
 
-ifeq ($(HOST_ARCH), arm)
-  MY_MAGISK_SOURCE_PATH := lib/armeabi-v7a/
-else ifeq ($(HOST_ARCH), arm64)
-  MY_MAGISK_SOURCE_PATH := lib/armeabi-v7a/
-else ifeq ($(HOST_ARCH), x86)
-  MY_MAGISK_SOURCE_PATH := lib/x86/
-else ifeq ($(HOST_ARCH), x86_64)
-  MY_MAGISK_SOURCE_PATH := lib/x86/
+ifneq ($(filter arm arm64 ,$(HOST_ARCH)),)
+  MY_MAGISK_SOURCE_PATH_32 := lib/armeabi-v7a/
+  ifeq ($(MAGISK_VERSION), 24.1)
+    MY_MAGISK_SOURCE_PATH_64 := lib/arm64-v8a/
+  else
+    MY_MAGISK_SOURCE_PATH_64 := $(MY_MAGISK_SOURCE_PATH_32)
+  endif
+else ifneq ($(filter x86 x86_64 ,$(HOST_ARCH)),)
+  MY_MAGISK_SOURCE_PATH_32 := lib/x86/
+  ifeq ($(MAGISK_VERSION), 24.1)
+    MY_MAGISK_SOURCE_PATH_64 := lib/x86_64/
+  else
+    MY_MAGISK_SOURCE_PATH_64 := $(MY_MAGISK_SOURCE_PATH_32)
+  endif
+endif
+
+ifneq ($(filter arm x86 ,$(HOST_ARCH)),)
+  MY_MAGISK_SOURCE_PATH := $(MY_MAGISK_SOURCE_PATH_32)
+else ifneq ($(filter arm64 x86_64 ,$(HOST_ARCH)),)
+  MY_MAGISK_SOURCE_PATH := $(MY_MAGISK_SOURCE_PATH_64)
 else
   $(error Host architecture not supported: $(TARGET_ARCH))
 endif
