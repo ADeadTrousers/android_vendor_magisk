@@ -9,8 +9,10 @@ LOCAL_SRC_FILES := addon.d.sh
 LOCAL_MODULE_PATH := $(TARGET_OUT)/addon.d
 
 ifndef $(MAGISK_VERSION)
-  MAGISK_VERSION := 24.1
+  MAGISK_VERSION := 25.1
 endif
+
+MY_MAGISK_MAJOR := $(shell echo $(MAGISK_VERSION) | cut -f1 -d.)
 
 MY_MAGISK_INTERMEDIATES := $(TARGET_OUT_INTERMEDIATES)/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
 MY_MAGISK_ARCHIVE := $(LOCAL_PATH)/Magisk-v$(MAGISK_VERSION).apk
@@ -24,14 +26,14 @@ MY_MAGISK_SOURCE_FUNCTIONS := assets/util_functions.sh
 
 ifneq ($(filter arm arm64 ,$(TARGET_ARCH)),)
   MY_MAGISK_SOURCE_PATH_32 := lib/armeabi-v7a/
-  ifeq ($(MAGISK_VERSION), 24.1)
+  ifeq ($(shell test $(MY_MAGISK_MAJOR) -gt 23; echo $$?),0)
     MY_MAGISK_SOURCE_PATH_64 := lib/arm64-v8a/
   else
     MY_MAGISK_SOURCE_PATH_64 := $(MY_MAGISK_SOURCE_PATH_32)
   endif
 else ifneq ($(filter x86 x86_64 ,$(TARGET_ARCH)),)
   MY_MAGISK_SOURCE_PATH_32 := lib/x86/
-  ifeq ($(MAGISK_VERSION), 24.1)
+  ifeq ($(shell test $(MY_MAGISK_MAJOR) -gt 23; echo $$?),0)
     MY_MAGISK_SOURCE_PATH_64 := lib/x86_64/
   else
     MY_MAGISK_SOURCE_PATH_64 := $(MY_MAGISK_SOURCE_PATH_32)
@@ -51,14 +53,14 @@ MY_MAGISK_SOURCE_32 := $(MY_MAGISK_SOURCE_PATH_32)libmagisk32.so
 
 ifneq ($(filter arm arm64 ,$(HOST_ARCH)),)
   MY_MAGISK_SOURCE_PATH_32 := lib/armeabi-v7a/
-  ifeq ($(MAGISK_VERSION), 24.1)
+  ifeq ($(shell test $(MY_MAGISK_MAJOR) -gt 23; echo $$?),0)
     MY_MAGISK_SOURCE_PATH_64 := lib/arm64-v8a/
   else
     MY_MAGISK_SOURCE_PATH_64 := $(MY_MAGISK_SOURCE_PATH_32)
   endif
 else ifneq ($(filter x86 x86_64 ,$(HOST_ARCH)),)
   MY_MAGISK_SOURCE_PATH_32 := lib/x86/
-  ifeq ($(MAGISK_VERSION), 24.1)
+  ifeq ($(shell test $(MY_MAGISK_MAJOR) -gt 23; echo $$?),0)
     MY_MAGISK_SOURCE_PATH_64 := lib/x86_64/
   else
     MY_MAGISK_SOURCE_PATH_64 := $(MY_MAGISK_SOURCE_PATH_32)
