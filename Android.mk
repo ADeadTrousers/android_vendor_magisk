@@ -9,7 +9,7 @@ LOCAL_SRC_FILES := addon.d.sh
 LOCAL_MODULE_PATH := $(TARGET_OUT)/addon.d
 
 ifndef $(MAGISK_VERSION)
-  MAGISK_VERSION := 26.3
+  MAGISK_VERSION := 26.4
 endif
 
 MY_MAGISK_MAJOR := $(shell echo $(MAGISK_VERSION) | cut -f1 -d.)
